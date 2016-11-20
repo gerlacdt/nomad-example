@@ -71,6 +71,28 @@ nomad node-status --address="http://$MASTER_IP:4646"
 export ELB=$(./elb-get-dns.sh)
 ```
 
+### Vault
+
+``` bash
+export VAULT_ADDR=http://$MASTER_IP:8200
+
+# get all the 5 unseal keys and root token (store them somewhere!)
+vault init
+
+# unseal vault
+vault unseal
+vault unseal
+vault unseal
+
+# check unseal status
+vault status
+
+# login
+vault auth <root-token>
+
+# vault is ready to use
+```
+
 ### Rollout consul workers
 
 ```bash
