@@ -18,14 +18,14 @@ rm get.pip.py
 apt-get update
 apt-get install -y unzip dnsmasq
 
-wget https://releases.hashicorp.com/nomad/0.4.1/nomad_0.4.1_linux_amd64.zip
-unzip nomad_0.4.1_linux_amd64.zip
+wget https://releases.hashicorp.com/nomad/0.5.0/nomad_0.5.0_linux_amd64.zip
+unzip nomad_0.5.0_linux_amd64.zip
 mv nomad /usr/local/bin/
 
 mkdir -p /var/lib/nomad
 mkdir -p /etc/nomad
 
-rm nomad_0.4.1_linux_amd64.zip
+rm nomad_0.5.0_linux_amd64.zip
 
 cat > server.hcl <<EOF
 addresses {
@@ -108,6 +108,50 @@ sed -i "s/ADVERTISE_ADDR/${IP_ADDRESS}/" consul.service
 mv consul.service /etc/systemd/system/consul.service
 systemctl enable consul
 systemctl start consul
+
+
+## Setup vault
+
+wget https://releases.hashicorp.com/vault/0.6.2/vault_0.6.2_linux_amd64.zip
+unzip vault_0.6.2_linux_amd64.zip
+mv vault /usr/local/bin/vault
+rm vault_0.6.2_linux_amd64.zip
+
+mkdir -p /etc/vault
+
+cat > /etc/vault/vault.hcl <<'EOF'
+backend "consul" {
+  redirect_addr = "http://ADVERTISE_ADDR:8200"
+  address = "127.0.0.1:8500"
+  path = "vault/"
+}
+
+listener "tcp" {
+  address = "ADVERTISE_ADDR:8200"
+  tls_disable = 1
+}
+EOF
+
+sed -i "s/ADVERTISE_ADDR/${IP_ADDRESS}/" /etc/vault/vault.hcl
+
+cat > /etc/systemd/system/vault.service <<'EOF'
+[Unit]
+Description=Vault
+Documentation=https://vaultproject.io/docs/
+
+[Service]
+ExecStart=/usr/local/bin/vault server \
+  -config /etc/vault/vault.hcl
+
+ExecReload=/bin/kill -HUP $MAINPID
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable vault
+systemctl start vault
 
 ## Setup dnsmasq
 
