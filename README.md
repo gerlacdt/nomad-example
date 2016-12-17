@@ -167,8 +167,19 @@ nomad plan --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
 nomad run --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
 nomad status --address=http://$MASTER_IP:4646 helloapp-blue-green
 
-# change route weight for fine-grained routing
-# fabio route overrides
+# change blue count to 0
+# change green count to 2
+nomad plan --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
+nomad run --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
+nomad status --address=http://$MASTER_IP:4646 helloapp-blue-green
+
+# finer grained routing
+# set blue count 2 and green count 2
+nomad plan --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
+nomad run --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
+nomad status --address=http://$MASTER_IP:4646 helloapp-blue-green
+
+# change fabio route weight overrides in fabio-web-ui
 route weight hello-service hello.internal weight 1.0 tags "blue"   # v0.1.0
 route weight hello-service hello.internal weight 1.0 tags "green"  # v0.2.0
 ```
