@@ -156,13 +156,14 @@ while true; do curl -s -H "Host: hello.internal" http://$ELB/version; sleep 1; d
 nomad plan --address=http://$MASTER_IP:4646 helloapp.nomad
 nomad run --address=http://$MASTER_IP:4646 helloapp.nomad
 nomad status --address=http://$MASTER_IP:4646 helloapp
+
+# stop job after playing around
+nomad stop --address=http://$MASTER_IP:4646 helloapp
 ```
 
 ### Blue-green Deployment / Canary
 
 ```bash
-nomad stop --address=http://$MASTER_IP:4646 helloapp
-
 nomad plan --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
 nomad run --address=http://$MASTER_IP:4646 helloapp-blue-green.nomad
 nomad status --address=http://$MASTER_IP:4646 helloapp-blue-green
@@ -204,6 +205,23 @@ nomad run batch.nomad
 nomad status batch
 nomad status <batch/periodic-id>
 nomad logs --address=http://$MASTER_IP:4646 <alloc-id>
+```
+
+### Nomad dynamic port binding
+
+More information can be found in the nomad docs:
+
+* [nomad-docker](https://www.nomadproject.io/docs/drivers/docker.html)
+* [nomad-runtime-environment](https://www.nomadproject.io/docs/runtime/environment.html)
+
+```bash
+# nomad can bind ports dynamically so you don't have to expose them in the Dockerfile
+# i.e. manual docker command:
+# docker run --rm  --expose 8080 -p 8080:8080 -e NOMAD_PORT_http=8080 gerlacdt/helloapp:v0.3.0
+
+nomad plan --address=http://$MASTER_IP:4646 helloapp-dynamic.nomad
+nomad run --address=http://$MASTER_IP:4646 helloapp-dynamic.nomad
+nomad status --address=http://$MASTER_IP:4646 helloapp-dynamic
 ```
 
 # Cleanup
