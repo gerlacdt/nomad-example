@@ -20,7 +20,8 @@ apt-get install -y unzip dnsmasq jq
 # aws-cli and jq needed...
 export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \
                                --filters "Name=tag:Name,Values=nomad-server-dev" \
-                                  | jq ".Reservations[0].Instances[].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress" | tr "\n" "," | sed 's/,$//';)
+                               --filters "Name=tag:Name,Values=nomad-server-dev" "Name=instance-state-code,Values=16" \
+                               | jq ".Reservations[].Instances[].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress" | tr "\n" "," | sed 's/,$//';)
 
 ## Setup dnsmasq
 
