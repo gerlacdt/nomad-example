@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export AWS_DEFAULT_REGION="eu-west-1"
 export IP_ADDRESS=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 
 ## change working directory
@@ -17,21 +18,6 @@ rm get.pip.py
 
 apt-get update
 apt-get install -y unzip dnsmasq jq
-
-# aws-cli and jq needed...
-export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \
-                               --filters "Name=tag:Name,Values=nomad-server-dev" \
-                               --filters "Name=tag:Name,Values=nomad-server-dev" "Name=instance-state-code,Values=16" \
-                               | jq ".Reservations[].Instances[].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress")
-
-SERVERS=""
-for i in $NOMAD_SERVER_IPV4
-do
-    SERVERS+="${i}, "
-done
-
-SERVERS=$(echo -n $SERVERS | sed -e "s/,$//")
-
 
 wget https://releases.hashicorp.com/nomad/0.5.0/nomad_0.5.0_linux_amd64.zip
 unzip nomad_0.5.0_linux_amd64.zip
@@ -96,6 +82,18 @@ unzip consul_0.7.0_linux_amd64.zip
 mv consul /usr/local/bin/consul
 rm consul_0.7.0_linux_amd64.zip
 
+# aws-cli and jq needed...
+export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \
+                               --filters "Name=tag:Name,Values=nomad-server-dev" \
+                               --filters "Name=tag:Name,Values=nomad-server-dev" "Name=instance-state-code,Values=16" \
+                               | jq ".Reservations[].Instances[].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress")
+SERVERS=""
+for i in $NOMAD_SERVER_IPV4
+do
+    SERVERS+="${i}, "
+done
+SERVERS=$(echo -n $SERVERS | sed -e "s/,$//")
+
 cat > config.hcl <<EOF
 {
   "advertise_addr": "ADVERTISE_ADDR",
@@ -106,6 +104,7 @@ cat > config.hcl <<EOF
   "server": true,
   "ui": true,
   "retry_join": [ CONSUL_SERVERS ]
+}
 EOF
 sed -i "s/ADVERTISE_ADDR/${IP_ADDRESS}/" config.hcl
 sed -i "s/CONSUL_SERVERS/${SERVERS}/" config.hcl

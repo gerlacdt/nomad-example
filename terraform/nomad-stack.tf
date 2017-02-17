@@ -10,6 +10,7 @@ resource "aws_instance" "nomad-masters" {
   vpc_security_group_ids = ["${var.security_group_id}"]
   user_data = "${file("server-install.sh")}"
   subnet_id = "${element(var.elb_subnet_ids, 0)}"
+  iam_instance_profile = "${var.instance_profile}"
   tags {
     Name = "nomad-server-dev"
   }
@@ -63,7 +64,7 @@ resource "aws_autoscaling_group" "nomad-worker-asg" {
   min_size = "${var.count_workers}"
   desired_capacity = "${var.count_workers}"
   health_check_grace_period = 300
-  health_check_type = "ELB"
+  health_check_type = "EC2"
   launch_configuration = "${aws_launch_configuration.nomad-worker-lc.name}"
   load_balancers = ["${aws_elb.nomad-worker-elb.name}"]
   vpc_zone_identifier = ["${var.elb_subnet_ids}"]
