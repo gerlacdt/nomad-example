@@ -16,7 +16,21 @@ rm get.pip.py
 ## setup nomad
 
 apt-get update
-apt-get install -y unzip dnsmasq
+apt-get install -y unzip dnsmasq jq
+
+# aws-cli and jq needed...
+export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \
+                               --filters "Name=tag:Name,Values=nomad-server-dev" \
+                               | jq ".Reservations[0].Instances[].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress")
+
+SERVERS=""
+for i in $NOMAD_SERVER_IPV4
+do
+    SERVERS+="${i}, "
+done
+
+SERVERS=$(echo -n $SERVERS | sed -e "s/,$//")
+
 
 wget https://releases.hashicorp.com/nomad/0.5.0/nomad_0.5.0_linux_amd64.zip
 unzip nomad_0.5.0_linux_amd64.zip
@@ -74,11 +88,27 @@ systemctl start nomad
 ## Setup consul
 
 mkdir -p /var/lib/consul
+mkdir -p /etc/consul
 
 wget https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_linux_amd64.zip
 unzip consul_0.7.0_linux_amd64.zip
 mv consul /usr/local/bin/consul
 rm consul_0.7.0_linux_amd64.zip
+
+cat > config.hcl <<EOF
+{
+  "advertise_addr": "ADVERTISE_ADDR",
+  "bind_addr": "0.0.0.0",
+  "bootstrap_expect": 3,
+  "client_addr": "0.0.0.0",
+  "data_dir": "/var/lib/consul",
+  "server": true,
+  "ui": true,
+  "retry_join": [ CONSUL_SERVERS ]
+EOF
+sed -i "s/ADVERTISE_ADDR/${IP_ADDRESS}/" config.hcl
+sed -i "s/CONSUL_SERVERS/${SERVERS}/" config.hcl
+mv config.hcl /etc/consul/config.hcl
 
 cat > consul.service <<'EOF'
 [Unit]
@@ -87,13 +117,7 @@ Documentation=https://consul.io/docs/
 
 [Service]
 ExecStart=/usr/local/bin/consul agent \
-  -advertise=ADVERTISE_ADDR \
-  -bind=0.0.0.0 \
-  -bootstrap-expect=3 \
-  -client=0.0.0.0 \
-  -data-dir=/var/lib/consul \
-  -server \
-  -ui
+  -config-file /etc/consul/config.hcl
 
 ExecReload=/bin/kill -HUP $MAINPID
 LimitNOFILE=65536

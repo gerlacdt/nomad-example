@@ -11,7 +11,7 @@ resource "aws_instance" "nomad-masters" {
   user_data = "${file("server-install.sh")}"
   subnet_id = "${element(var.elb_subnet_ids, 0)}"
   tags {
-    Name = "danger-nomad-master"
+    Name = "nomad-server-dev"
   }
 }
 
@@ -70,7 +70,7 @@ resource "aws_autoscaling_group" "nomad-worker-asg" {
 
   tag {
     key = "Name"
-    value = "danger-nomad-worker"
+    value = "nomad-worker-dev"
     propagate_at_launch = true
   }
 }
