@@ -19,10 +19,14 @@ variable "ami_id" {
   default = "ami-98ecb7fe"
 }
 
-variable "count_workers" {}
+variable "count_workers" {
+  default = 2
+}
 
 # should be at least 3 for a consul/nomad cluster
-variable "count_masters" {}
+variable "count_masters" {
+  default = 3
+}
 variable "ssh_keyname" {}
 variable "security_group_id" {}
 variable "elb_subnet_ids" { default = [] }
