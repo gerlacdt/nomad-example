@@ -6,7 +6,9 @@ This guide is shamelessly copied from Kelsey Hightower's great presentation at
 [AWS](https://aws.amazon.com/) is used instead of
 [Google Cloud Platform](https://cloud.google.com/)
 
-## Instructions
+## Instructions (with aws-cli)
+
+You can also use terraform to set everything up. See at the bottom.
 
 ### Install consul and nomad
 
@@ -92,6 +94,60 @@ vault auth <root-token>
 
 # vault is ready to use
 ```
+
+# Cleanup
+
+```bash
+./elb-delete.sh
+./delete-nomad-workers.sh
+./delete-nomad-servers.sh
+```
+
+## Instructions with terraform
+
+### Install terraform
+
+see [terrafrom](https://www.terraform.io/intro/getting-started/install.html)
+
+### Create aws infrastructure
+
+The stack contains:
+
+* master nodes on which nomad and consul masters are installed (default 3, m4.large)
+* an autoscaling-group with 2 nomad-workers (default m4.large)
+* an ELB attached with the autoscaling-group
+
+``` bash
+cd terraform
+
+cp terrafrom.tfvars.tmpl terraform.tfvars
+
+terraform validate  # validate terraform project files
+terraform plan      # look what will be created
+terraform apply     # create infrastructure
+terraform destroy   # clean up your resources!
+```
+
+### Differences to the guide with aws-cli
+
+For some commands you need the scripts from $PROJECT/terraform/helpers
+instead from $PROJECT/scripts!
+
+``` bash
+cd terraform/helpers
+
+NOMAD_SERVER_IPS=$(./get_nomad_server_ips.sh)
+MASTER_IP=$(echo -n $NOMAD_SERVER_IPS | awk '{print $1}')
+
+# joining the nomad and consul cluster is not necessary anymore (it's done automatically)
+
+# get ELB dns-name
+export ELB=$(./elb-get-dns.sh)
+
+# registering nomad-worker with elb is not necessary (it's done automatically)
+```
+
+## Nomad usage guide
 
 ### Rollout consul workers
 
@@ -224,13 +280,8 @@ nomad run --address=http://$MASTER_IP:4646 helloapp-dynamic.nomad
 nomad status --address=http://$MASTER_IP:4646 helloapp-dynamic
 ```
 
-# Cleanup
 
-```bash
-./elb-delete.sh
-./delete-nomad-workers.sh
-./delete-nomad-servers.sh
-```
+
 
 # References
 
