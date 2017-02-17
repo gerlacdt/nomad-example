@@ -107,7 +107,7 @@ vault auth <root-token>
 
 ### Install terraform
 
-see [terrafrom](https://www.terraform.io/intro/getting-started/install.html)
+see [terraform](https://www.terraform.io/intro/getting-started/install.html)
 
 ### Create aws infrastructure
 
