@@ -8,7 +8,7 @@ resource "aws_instance" "nomad-masters" {
   instance_type = "${var.instance_type_master}"
   key_name = "${var.ssh_keyname}"
   vpc_security_group_ids = ["${var.security_group_id}"]
-  user_data = "${file("server-install.sh")}"
+  user_data = "${file("./scripts/server-install.sh")}"
   subnet_id = "${element(var.elb_subnet_ids, 0)}"
   iam_instance_profile = "${var.instance_profile}"
   tags {
@@ -17,7 +17,7 @@ resource "aws_instance" "nomad-masters" {
 }
 
 resource "aws_elb" "nomad-worker-elb" {
-  name = "danger-nomad-worker-elb"
+  name = "nomad-worker-elb"
   subnets = ["${var.elb_subnet_ids}"]
   security_groups = ["${var.security_group_id}"]
   internal = true
@@ -81,7 +81,7 @@ resource "aws_launch_configuration" "nomad-worker-lc" {
   image_id = "${var.ami_id}"
   instance_type = "${var.instance_type_worker}"
   security_groups = ["${var.security_group_id}"]
-  user_data = "${file("client-install.sh")}"
+  user_data = "${file("./scripts/client-install.sh")}"
   key_name = "${var.ssh_keyname}"
   iam_instance_profile = "${var.instance_profile}"
   root_block_device = {
