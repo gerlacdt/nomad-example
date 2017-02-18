@@ -136,10 +136,10 @@ systemctl start consul
 
 ## Setup vault
 
-wget https://releases.hashicorp.com/vault/0.6.2/vault_0.6.2_linux_amd64.zip
-unzip vault_0.6.2_linux_amd64.zip
+wget https://releases.hashicorp.com/vault/0.6.5/vault_0.6.5_linux_amd64.zip
+unzip vault_0.6.5_linux_amd64.zip
 mv vault /usr/local/bin/vault
-rm vault_0.6.2_linux_amd64.zip
+rm vault_0.6.5_linux_amd64.zip
 
 mkdir -p /etc/vault
 
