@@ -38,8 +38,8 @@ terraform destroy   # clean up your resources!
 
 The guide is based
 on
-[consul-v0.7.0](https://www.consul.io/downloads.html),
-[nomad-v0.5.0](https://www.nomadproject.io/downloads.html),
+[consul-v0.7.5](https://www.consul.io/downloads.html),
+[nomad-v0.5.4](https://www.nomadproject.io/downloads.html),
 [vault-v0.6.2](https://www.vaultproject.io/downloads.html)
 
 ```bash

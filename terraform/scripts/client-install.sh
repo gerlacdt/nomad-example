@@ -47,14 +47,14 @@ systemctl start docker
 
 ## install nomad worker (at last so that system is ready for jobs)
 
-wget https://releases.hashicorp.com/nomad/0.5.0/nomad_0.5.0_linux_amd64.zip
-unzip nomad_0.5.0_linux_amd64.zip
+wget https://releases.hashicorp.com/nomad/0.5.4/nomad_0.5.4_linux_amd64.zip
+unzip nomad_0.5.4_linux_amd64.zip
 mv nomad /usr/local/bin/
 
 mkdir -p /var/lib/nomad
 mkdir -p /etc/nomad
 
-rm nomad_0.5.0_linux_amd64.zip
+rm nomad_0.5.4_linux_amd64.zip
 
 cat > client.hcl <<EOF
 addresses {

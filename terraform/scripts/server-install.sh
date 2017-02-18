@@ -19,14 +19,14 @@ rm get.pip.py
 apt-get update
 apt-get install -y unzip dnsmasq jq
 
-wget https://releases.hashicorp.com/nomad/0.5.0/nomad_0.5.0_linux_amd64.zip
-unzip nomad_0.5.0_linux_amd64.zip
+wget https://releases.hashicorp.com/nomad/0.5.4/nomad_0.5.4_linux_amd64.zip
+unzip nomad_0.5.4_linux_amd64.zip
 mv nomad /usr/local/bin/
 
 mkdir -p /var/lib/nomad
 mkdir -p /etc/nomad
 
-rm nomad_0.5.0_linux_amd64.zip
+rm nomad_0.5.4_linux_amd64.zip
 
 cat > server.hcl <<EOF
 addresses {
