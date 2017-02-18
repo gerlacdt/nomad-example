@@ -52,7 +52,7 @@ resource "aws_elb" "nomad-worker-elb" {
   }
 
   tags {
-    Name = "danger-nomad-elb"
+    Name = "nomad-worker-elb"
   }
 }
 

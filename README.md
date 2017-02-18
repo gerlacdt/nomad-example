@@ -6,11 +6,35 @@ This guide is shamelessly copied from Kelsey Hightower's great presentation at
 [AWS](https://aws.amazon.com/) is used instead of
 [Google Cloud Platform](https://cloud.google.com/)
 
-## Instructions (with aws-cli)
+## Instructions
 
-You can also use terraform to set everything up. See at the bottom.
+### Install terraform
 
-### Install consul and nomad
+see [terraform](https://www.terraform.io/intro/getting-started/install.html)
+This guide uses terrform v0.8.6
+
+### Create aws infrastructure
+
+The stack contains:
+
+* 3 master consul/nomad-nodes (m4.large)
+* an autoscaling-group with 2 nomad-workers (m4.large)
+* an ELB attached with the autoscaling-group
+
+``` bash
+cd terraform
+
+cp terrafrom.tfvars.tmpl terraform.tfvars
+# adjust the variables
+# vim terraform.tfvars
+
+terraform validate  # validate terraform project files
+terraform plan      # look what will be created
+terraform apply     # create infrastructure
+terraform destroy   # clean up your resources!
+```
+
+### Setup consul, nomad, vault on your local machine
 
 The guide is based
 on
@@ -19,61 +43,27 @@ on
 [vault-v0.6.2](https://www.vaultproject.io/downloads.html)
 
 ```bash
-# download consul and nomad to your laptop
+# download consul, nomad and vault to your laptop
 # put them in your $PATH
-```
 
-### Adjust environment variables
+cd terraform/helpers
 
-``` bash
-cp scripts/env.sh.tmpl scripts/env.sh
-
-# adjust environment variables
-vim scripts/env.sh
-```
-
-### Create nomad servers and join them to a cluster
-
-```bash
-./create-nomad-servers.sh
-
-# wait till they are ready
-
-# get ips
 NOMAD_SERVER_IPS=$(./get_nomad_server_ips.sh)
 MASTER_IP=$(echo -n $NOMAD_SERVER_IPS | awk '{print $1}')
 
-# create consul and nomad master cluster
-nomad server-join --address="http://$MASTER_IP:4646" $(echo -n $NOMAD_SERVER_IPS | awk '{print $2,$3}')
-consul join --rpc-addr="$MASTER_IP:8400" $(echo -n $NOMAD_SERVER_IPS | awk '{print $2,$3}')
+# joining the nomad and consul cluster is not necessary (it's done automatically)
+# nomad server-join --address="http://$MASTER_IP:4646" $(echo -n $NOMAD_SERVER_IPS | awk '{print $2,$3}')
+# consul join --rpc-addr="$MASTER_IP:8400" $(echo -n $NOMAD_SERVER_IPS | awk '{print $2,$3}')
 
 # check nomad and consul master nodes
 nomad server-members --address="http://$MASTER_IP:4646"
 consul members --rpc-addr="$MASTER_IP:8400"
+
+# get ELB dns-name
+export ELB=$(./get_elb_dns.sh)
 ```
 
-### Create nomad workers
-
-```bash
-./create-nomad-workers.sh
-
-# wait till they are ready
-
-NOMAD_WORKER_IPS=$(./get_nomad_worker_ips.sh)
-
-# check nomad workers
-nomad node-status --address="http://$MASTER_IP:4646"
-```
-
-### Create ELB
-
-``` bash
-./elb-create.sh
-./elb-register-nomad-workers.sh
-export ELB=$(./elb-get-dns.sh)
-```
-
-### Vault
+### Setup Vault (optional)
 
 ``` bash
 export VAULT_ADDR=http://$MASTER_IP:8200
@@ -93,58 +83,6 @@ vault status
 vault auth <root-token>
 
 # vault is ready to use
-```
-
-# Cleanup
-
-```bash
-./elb-delete.sh
-./delete-nomad-workers.sh
-./delete-nomad-servers.sh
-```
-
-## Instructions with terraform
-
-### Install terraform
-
-see [terraform](https://www.terraform.io/intro/getting-started/install.html)
-
-### Create aws infrastructure
-
-The stack contains:
-
-* master nodes on which nomad and consul masters are installed (default 3, m4.large)
-* an autoscaling-group with 2 nomad-workers (default m4.large)
-* an ELB attached with the autoscaling-group
-
-``` bash
-cd terraform
-
-cp terrafrom.tfvars.tmpl terraform.tfvars
-
-terraform validate  # validate terraform project files
-terraform plan      # look what will be created
-terraform apply     # create infrastructure
-terraform destroy   # clean up your resources!
-```
-
-### Differences to the guide with aws-cli
-
-For some commands you need the scripts from $PROJECT/terraform/helpers
-instead from $PROJECT/scripts!
-
-``` bash
-cd terraform/helpers
-
-NOMAD_SERVER_IPS=$(./get_nomad_server_ips.sh)
-MASTER_IP=$(echo -n $NOMAD_SERVER_IPS | awk '{print $1}')
-
-# joining the nomad and consul cluster is not necessary anymore (it's done automatically)
-
-# get ELB dns-name
-export ELB=$(./elb-get-dns.sh)
-
-# registering nomad-worker with elb is not necessary (it's done automatically)
 ```
 
 ## Nomad usage guide
@@ -279,9 +217,6 @@ nomad plan --address=http://$MASTER_IP:4646 helloapp-dynamic.nomad
 nomad run --address=http://$MASTER_IP:4646 helloapp-dynamic.nomad
 nomad status --address=http://$MASTER_IP:4646 helloapp-dynamic
 ```
-
-
-
 
 # References
 

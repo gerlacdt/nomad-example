@@ -13,7 +13,7 @@ variable "instance_type_worker" {
 }
 variable "vpc_id" {}
 
-# user-data script worked with ubuntu 16.04
+# user-data script workes with ubuntu 16.04
 variable "ami_id" {
   type = "string"
   default = "ami-98ecb7fe"
