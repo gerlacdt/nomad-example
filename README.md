@@ -59,6 +59,9 @@ MASTER_IP=$(echo -n $NOMAD_SERVER_IPS | awk '{print $1}')
 nomad server-members --address="http://$MASTER_IP:4646"
 consul members --rpc-addr="$MASTER_IP:8400"
 
+# check nomad workers (takes some time)
+nomad node-status --address="http://$MASTER_IP:4646"
+
 # get ELB dns-name
 export ELB=$(./get_elb_dns.sh)
 ```
