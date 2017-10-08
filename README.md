@@ -15,11 +15,18 @@ This guide uses terrform v0.8.6
 
 ### Create aws infrastructure
 
+
 The stack contains:
 
 * 3 master consul/nomad-nodes (m4.large)
 * an autoscaling-group with 2 nomad-workers (m4.large)
 * an ELB attached with the autoscaling-group
+
+The stack uses:
+
+* ubuntu AMI `ami-98ecb7fe`, name: `ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20170202`
+  * username is `ubuntu`
+* aws-region is `eu-west-1`
 
 ``` bash
 cd terraform
