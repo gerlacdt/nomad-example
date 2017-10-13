@@ -47,7 +47,7 @@ The guide is based
 on
 [consul-v0.9.3](https://www.consul.io/downloads.html),
 [nomad-v0.6.3](https://www.nomadproject.io/downloads.html),
-[vault-v0.6.5](https://www.vaultproject.io/downloads.html)
+[vault-v0.8.3](https://www.vaultproject.io/downloads.html)
 
 ```bash
 # download consul, nomad and vault to your laptop
