@@ -77,10 +77,10 @@ systemctl start nomad
 mkdir -p /var/lib/consul
 mkdir -p /etc/consul
 
-wget https://releases.hashicorp.com/consul/0.7.5/consul_0.7.5_linux_amd64.zip
-unzip consul_0.7.5_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip
+unzip consul_0.9.3_linux_amd64.zip
 mv consul /usr/local/bin/consul
-rm consul_0.7.5_linux_amd64.zip
+rm consul_0.9.3_linux_amd64.zip
 
 # aws-cli and jq needed...
 export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \

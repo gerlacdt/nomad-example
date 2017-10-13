@@ -26,7 +26,7 @@ cat > local/config.json <<'EOF'
   "retry_join": [CONSUL_SERVERS],
   "advertise_addr": "IP_ADDRESS",
   "client_addr": "0.0.0.0",
-  "ui_dir": "local/ui"
+  "ui": true
 }
 EOF
 
