@@ -11,15 +11,15 @@ This guide is shamelessly copied from Kelsey Hightower's great presentation at
 ### Install terraform
 
 see [terraform](https://www.terraform.io/intro/getting-started/install.html)
-This guide uses terrform v0.8.6
+This guide uses [terraform-v0.10.7](https://www.terraform.io/downloads.html)
 
 ### Create aws infrastructure
 
 
 The stack contains:
 
-* 3 master consul/nomad-nodes (m4.large)
-* an autoscaling-group with 2 nomad-workers (m4.large)
+* 3 master consul/nomad-nodes (t2.small)
+* an autoscaling-group with 2 nomad-workers (t2.small)
 * an ELB attached with the autoscaling-group
 
 The stack uses:
@@ -35,6 +35,7 @@ cp terrafrom.tfvars.tmpl terraform.tfvars
 # adjust the variables
 # vim terraform.tfvars
 
+terraform init
 terraform validate  # validate terraform project files
 terraform plan      # look what will be created
 terraform apply     # create infrastructure
@@ -45,9 +46,9 @@ terraform destroy   # clean up your resources!
 
 The guide is based
 on
-[consul-v0.7.5](https://www.consul.io/downloads.html),
-[nomad-v0.5.4](https://www.nomadproject.io/downloads.html),
-[vault-v0.6.5](https://www.vaultproject.io/downloads.html)
+[consul-v0.9.3](https://www.consul.io/downloads.html),
+[nomad-v0.6.3](https://www.nomadproject.io/downloads.html),
+[vault-v0.8.3](https://www.vaultproject.io/downloads.html)
 
 ```bash
 # download consul, nomad and vault to your laptop

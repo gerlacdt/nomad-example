@@ -19,14 +19,14 @@ rm get.pip.py
 apt-get update
 apt-get install -y unzip dnsmasq jq
 
-wget https://releases.hashicorp.com/nomad/0.5.4/nomad_0.5.4_linux_amd64.zip
-unzip nomad_0.5.4_linux_amd64.zip
+wget https://releases.hashicorp.com/nomad/0.6.3/nomad_0.6.3_linux_amd64.zip
+unzip nomad_0.6.3_linux_amd64.zip
 mv nomad /usr/local/bin/
 
 mkdir -p /var/lib/nomad
 mkdir -p /etc/nomad
 
-rm nomad_0.5.4_linux_amd64.zip
+rm nomad_0.6.3_linux_amd64.zip
 
 cat > server.hcl <<EOF
 addresses {
@@ -77,10 +77,10 @@ systemctl start nomad
 mkdir -p /var/lib/consul
 mkdir -p /etc/consul
 
-wget https://releases.hashicorp.com/consul/0.7.5/consul_0.7.5_linux_amd64.zip
-unzip consul_0.7.5_linux_amd64.zip
+wget https://releases.hashicorp.com/consul/0.9.3/consul_0.9.3_linux_amd64.zip
+unzip consul_0.9.3_linux_amd64.zip
 mv consul /usr/local/bin/consul
-rm consul_0.7.5_linux_amd64.zip
+rm consul_0.9.3_linux_amd64.zip
 
 # aws-cli and jq needed...
 export NOMAD_SERVER_IPV4=$(aws ec2 describe-instances \
@@ -136,10 +136,10 @@ systemctl start consul
 
 ## Setup vault
 
-wget https://releases.hashicorp.com/vault/0.6.5/vault_0.6.5_linux_amd64.zip
-unzip vault_0.6.5_linux_amd64.zip
+wget https://releases.hashicorp.com/vault/0.8.3/vault_0.8.3_linux_amd64.zip
+unzip vault_0.8.3_linux_amd64.zip
 mv vault /usr/local/bin/vault
-rm vault_0.6.5_linux_amd64.zip
+rm vault_0.8.3_linux_amd64.zip
 
 mkdir -p /etc/vault
 
