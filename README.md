@@ -18,8 +18,8 @@ This guide uses terrform v0.8.6
 
 The stack contains:
 
-* 3 master consul/nomad-nodes (m4.large)
-* an autoscaling-group with 2 nomad-workers (m4.large)
+* 3 master consul/nomad-nodes (t2.small)
+* an autoscaling-group with 2 nomad-workers (t2.small)
 * an ELB attached with the autoscaling-group
 
 The stack uses:

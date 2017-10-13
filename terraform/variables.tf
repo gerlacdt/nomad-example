@@ -5,11 +5,11 @@ variable "region" {
 # should be larger because they are under load
 variable "instance_type_master" {
   type = "string"
-  default = "m4.large"
+  default = "t2.small"
 }
 variable "instance_type_worker" {
   type = "string"
-  default = "m4.large"
+  default = "t2.small"
 }
 variable "vpc_id" {}
 
