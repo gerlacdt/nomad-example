@@ -11,7 +11,7 @@ This guide is shamelessly copied from Kelsey Hightower's great presentation at
 ### Install terraform
 
 see [terraform](https://www.terraform.io/intro/getting-started/install.html)
-This guide uses terrform v0.8.6
+This guide uses [terraform-v0.10.7](https://www.terraform.io/downloads.html)
 
 ### Create aws infrastructure
 
@@ -35,6 +35,7 @@ cp terrafrom.tfvars.tmpl terraform.tfvars
 # adjust the variables
 # vim terraform.tfvars
 
+terraform init
 terraform validate  # validate terraform project files
 terraform plan      # look what will be created
 terraform apply     # create infrastructure
